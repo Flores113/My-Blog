@@ -15,7 +15,7 @@
 1. Fork 或 Use this template 创建你的仓库
 2. 修改 `public/config.json` 中的配置
 3. 在 Issues 中创建新文章（可添加任意标签）
-4. 点击`Deploy Zemlo`等待 GitHub Actions 部署
+4. 运行`Deploy Zemlo`这个工作流（Acitons)，接下来等待 GitHub Actions 部署
 5. 访问 `https://你的用户名.github.io/你的仓库名/`
 
 ## 配置说明
