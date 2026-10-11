@@ -1,6 +1,6 @@
-# Zemlo
+# Zemlo Blog
 
-一个极简、克制的 GitHub Issues 驱动博客模板。
+一个极简、克制的 GitHub Issues 驱动博客模板，基于Gmeek设计。
 
 ## 特性
 
