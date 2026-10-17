@@ -2,97 +2,47 @@
 import config from '../../../public/config.json';
 import '../../styles/global.css';
 import { marked } from 'marked';
+import posts from '../../data/posts.json';
 
 marked.setOptions({ gfm: true, breaks: false });
 
 export async function getStaticPaths() {
-  // 🔑 关键修复：必须在 getStaticPaths 内部定义，因为 Astro 会将其隔离执行
-  const currentRepo = process.env.GITHUB_REPOSITORY || config.repo;
-  const utterancesRepo = process.env.GITHUB_REPOSITORY || config.utterancesRepo;
-  
-  const headers = import.meta.env.GITHUB_TOKEN
-    ? { Authorization: `Bearer ${import.meta.env.GITHUB_TOKEN}` }
-    : {};
-
-  const res = await fetch(`https://api.github.com/repos/${currentRepo}/issues?state=open`, { headers });
-  const posts = await res.json();
-
-  return posts.map((post: any) => ({
+  return posts.map((post) => ({
     params: { id: String(post.number) },
-    props: { 
-      post, 
+    props: {
+      post,
       htmlContent: marked(post.body || ''),
-      utterancesRepo // 作为 prop 传递给模板，确保 100% 准确
-    }
+    },
   }));
 }
 
-const { post, htmlContent, utterancesRepo } = Astro.props;
+const { post, htmlContent } = Astro.props;
 ---
 
-<html lang="zh" class="dark">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>{post.title} | {config.title}</title>
-</head>
-<body>
-  <header class="site-header">
-    <div class="container header-inner">
-      <div>
-        <a href={import.meta.env.BASE_URL} class="site-title">{config.title}</a>
-        <p class="site-desc">{config.description}</p>
-      </div>
-      <div class="header-right">
-        <a href={import.meta.env.BASE_URL}>Home</a>
-        <button class="theme-toggle" id="theme-toggle">🌙</button>
-      </div>
-    </div>
-  </header>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <title>{post.title} | {config.title}</title>
+  </head>
+  <body>
+    <nav>
+      <a href="/">Home</a>
+      <a href="/">← 返回列表</a>
+    </nav>
 
-  <main class="container">
-    <a href={import.meta.env.BASE_URL} style="font-size: 14px; margin-bottom: 16px; display: inline-block;">← 返回列表</a>
-    
-    <div class="post-header">
+    <article>
       <h1>{post.title}</h1>
-      <div class="post-meta">
-        <time>{new Date(post.created_at).toLocaleDateString('zh-CN')}</time>
-        {post.labels.map((l: any) => (
-          <span class="post-tag">{l.name}</span>
+      <time>{new Date(post.created_at).toLocaleDateString('zh-CN')}</time>
+      <div class="labels">
+        {post.labels.map((l) => (
+          <span>{l.name}</span>
         ))}
       </div>
-    </div>
-
-    <article class="markdown-body">
-      <div set:html={htmlContent}></div>
+      <div set:html={htmlContent} />
     </article>
 
-    <div style="margin-top: 48px;" id="comments">
-      <script is:inline>
-        const s = document.createElement('script');
-        s.src = 'https://utteranc.es/client.js';
-        s.setAttribute('repo', '{utterancesRepo}');
-        s.setAttribute('issue-term', 'pathname');
-        s.setAttribute('theme', 'github-dark');
-        s.setAttribute('crossorigin', 'anonymous');
-        s.async = true;
-        document.getElementById('comments').appendChild(s);
-      </script>
-    </div>
-  </main>
-
-  <footer class="site-footer container">
-    <p>Powered by <a href="https://github.com/Zhischooler/zemlo" target="_blank">Zemlo</a> & GitHub Pages.</p>
-  </footer>
-
-  <script>
-    const toggleBtn = document.getElementById('theme-toggle');
-    const htmlEl = document.documentElement;
-    if (htmlEl.classList.contains('dark')) toggleBtn.textContent = '☀️';
-    toggleBtn.addEventListener('click', () => {
-      htmlEl.classList.toggle('dark');
-      toggleBtn.textContent = htmlEl.classList.contains('dark') ? '☀️' : '🌙';
-    });
-  </script>
-</body>
+    <footer>
+      Powered by Zemlo & GitHub Pages.
+    </footer>
+  </body>
 </html>
