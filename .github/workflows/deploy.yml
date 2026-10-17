@@ -1,40 +1,44 @@
-name: Deploy Zemlo
+name: Build Zemlo
 
 on:
-  # 只允许手动触发
   workflow_dispatch:
 
 permissions:
   contents: read
-  pages: write
-  id-token: write
 
 jobs:
-  deploy:
-    environment:
-      name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
+  build:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-      
-      - uses: actions/setup-node@v4
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
         with:
           node-version: 20
-          
-      - name: Build Site
+          cache: 'npm'
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Generate posts JSON from Issues
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           GITHUB_REPOSITORY: ${{ github.repository }}
-        run: |
-          npm install
-          npm run build
-          
-      - uses: actions/configure-pages@v4
-      
-      - uses: actions/upload-pages-artifact@v3
+        run: python3 scripts/fetch_posts.py
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build Astro site
+        run: npm run build
+
+      - name: Upload build artifact
+        uses: actions/upload-artifact@v4
         with:
+          name: zemlo-dist
           path: ./dist
-          
-      - uses: actions/deploy-pages@v4
-        id: deployment
+          retention-days: 14
