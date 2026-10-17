@@ -1,9 +1,9 @@
 {
-  "title": "Zemlo",
-  "description": "A minimal, GitHub Issues driven blog template.",
-  "avatar": "https://github.com/your-username.png",
-  "website": "https://your-website.com",
-  "email": "your-email@example.com",
-  "repo": "fallback/fallback", 
-  "utterancesRepo": "fallback/fallback"
+  "title": "Zhischooler",
+  "description": "热爱编程",
+  "avatar": "https://github.com/Zhischooler.png",
+  "website": "https://github.com/Zhischooler",
+  "email": "zhixiaoer7891@outlook.com",
+  "repo": "Zhischooler/zemlo", 
+  "utterancesRepo": "Zhischooler/zemlo"
 }
