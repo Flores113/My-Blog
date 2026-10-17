@@ -1,77 +1,42 @@
 ---
 import config from '../../public/config.json';
 import '../styles/global.css';
+import posts from '../data/posts.json';
 
-const currentRepo = process.env.GITHUB_REPOSITORY || config.repo;
-
-const headers = import.meta.env.GITHUB_TOKEN
-  ? { Authorization: `Bearer ${import.meta.env.GITHUB_TOKEN}` }
-  : {};
-
-const res = await fetch(`https://api.github.com/repos/${currentRepo}/issues?state=open`, { headers });
-const posts = await res.json();
+const currentPosts = posts;
 ---
 
-<html lang="zh" class="dark">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>{config.title}</title>
-</head>
-<body>
-  <header class="site-header">
-    <div class="container" style="position: relative; text-align: center; padding: 40px 20px;">
-      <!-- 右上角导航 -->
-      <div class="header-right" style="position: absolute; right: 20px; top: 20px;">
-        <a href={import.meta.env.BASE_URL}>Home</a>
-        <button class="theme-toggle" id="theme-toggle">🌙</button>
-      </div>
-      
-      <!-- 核心布局：上方头像 + 标题，下方简介 -->
-      <div style="display: flex; flex-direction: column; align-items: center;">
-        <img 
-          src={config.avatar} 
-          alt="Avatar" 
-          style="width: 80px; height: 80px; border-radius: 50%; border: 1px solid var(--color-border); object-fit: cover; margin-bottom: 16px;" 
-        />
-        <a href={import.meta.env.BASE_URL} class="site-title" style="font-size: 24px; margin-bottom: 8px;">{config.title}</a>
-        <p class="site-desc" style="font-size: 14px; max-width: 600px; margin: 0 auto; line-height: 1.6;">{config.description}</p>
-      </div>
-    </div>
-  </header>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <title>{config.title}</title>
+  </head>
+  <body>
+    <nav><a href="/">Home</a></nav>
+    <header>
+      <img src={config.avatar} alt="Avatar" />
+      <h1>{config.title}</h1>
+      <p>{config.description}</p>
+    </header>
 
-  <main class="container">
-    {posts.length === 0 ? (
-      <p style="color: var(--color-text-secondary); text-align: center; padding: 40px 0;">暂无文章，请在 GitHub Issues 中创建。</p>
+    {currentPosts.length === 0 ? (
+      <p>暂无文章，请在 GitHub Issues 中创建。</p>
     ) : (
-      <ul class="post-list">
-        {posts.map((post: any) => (
-          <li class="post-item">
-            <a href={`post/${post.number}`} class="post-title-link">{post.title}</a>
-            <div class="post-meta">
-              <time>{new Date(post.created_at).toLocaleDateString('zh-CN')}</time>
-              {post.labels.map((l: any) => (
-                <span class="post-tag">{l.name}</span>
-              ))}
-            </div>
+      <ul>
+        {currentPosts.map((post) => (
+          <li>
+            <a href={`/post/${post.number}`}>{post.title}</a>
+            <time>{new Date(post.created_at).toLocaleDateString('zh-CN')}</time>
+            {post.labels.map((l) => (
+              <span>{l.name}</span>
+            ))}
           </li>
         ))}
       </ul>
     )}
-  </main>
 
-  <footer class="site-footer container">
-    <p>Powered by <a href="https://github.com/Zhischooler/zemlo" target="_blank">Zemlo</a> & GitHub Pages.</p>
-  </footer>
-
-  <script>
-    const toggleBtn = document.getElementById('theme-toggle');
-    const htmlEl = document.documentElement;
-    if (htmlEl.classList.contains('dark')) toggleBtn.textContent = '☀️';
-    toggleBtn.addEventListener('click', () => {
-      htmlEl.classList.toggle('dark');
-      toggleBtn.textContent = htmlEl.classList.contains('dark') ? '☀️' : '🌙';
-    });
-  </script>
-</body>
+    <footer>
+      Powered by Zemlo & GitHub Pages.
+    </footer>
+  </body>
 </html>
