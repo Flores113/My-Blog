@@ -2,6 +2,10 @@
 
 一个极简、克制的 GitHub Issues 驱动博客模板，基于Gmeek设计。
 
+
+> 跟你们说，本来是想做的Python+Astro的，结果不知道为什么主要语言成了CSS😂
+
+
 ## 特性
 
 - 📝 使用 GitHub Issues 写作
